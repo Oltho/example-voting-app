@@ -94,7 +94,7 @@ namespace Worker
 
             var command = connection.CreateCommand();
             command.CommandText = @"CREATE TABLE IF NOT EXISTS votes (
-                                        id VARCHAR(255) NOT NULL UNIQUE,
+                                        voter_id VARCHAR(255) NOT NULL,
                                         vote VARCHAR(255) NOT NULL
                                     )";
             command.ExecuteNonQuery();
@@ -135,14 +135,9 @@ namespace Worker
             var command = connection.CreateCommand();
             try
             {
-                command.CommandText = "INSERT INTO votes (id, vote) VALUES (@id, @vote)";
-                command.Parameters.AddWithValue("@id", voterId);
+                command.CommandText = "INSERT INTO votes (voter_id, vote) VALUES (@voterId, @vote)";
+                command.Parameters.AddWithValue("@voterId", voterId);
                 command.Parameters.AddWithValue("@vote", vote);
-                command.ExecuteNonQuery();
-            }
-            catch (DbException)
-            {
-                command.CommandText = "UPDATE votes SET vote = @vote WHERE id = @id";
                 command.ExecuteNonQuery();
             }
             finally
