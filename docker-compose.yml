@@ -9,8 +9,8 @@ services:
     ports:
       - "5000:80"
     networks:
-      - front-tier
-      - back-tier
+      - front-network
+      - back-network
 
   result:
     build: ./result
@@ -21,8 +21,8 @@ services:
       - "5001:80"
       - "5858:5858"
     networks:
-      - front-tier
-      - back-tier
+      - front-network
+      - back-network
 
   worker:
     build:
@@ -30,14 +30,14 @@ services:
     depends_on:
       - "redis"
     networks:
-      - back-tier
+      - back-network
 
   redis:
     image: redis:alpine
     container_name: redis
     ports: ["6379"]
     networks:
-      - back-tier
+      - back-network
 
   db:
     image: postgres:9.4
@@ -45,11 +45,13 @@ services:
     volumes:
       - "db-data:/var/lib/postgresql/data"
     networks:
-      - back-tier
+      - back-network
 
 volumes:
   db-data:
 
 networks:
-  front-tier:
-  back-tier:
+  front-network:
+    external:
+        name: traefik_traefik_rp
+  back-network:
